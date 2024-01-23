@@ -1,4 +1,4 @@
-package app;
+package intro_app.client;
 
 import java.io.IOException;
 import java.net.*;
@@ -42,7 +42,10 @@ public class SampleClient {
 
             // LOGIC STAGE
             // Display the data from the packet
-            System.out.println("Message received: " + new String(receivedMessage));
+            System.out.println("Response received: " + new String(receivedMessage));
+
+            // Close socket!
+            mySocket.close();
         } catch (UnknownHostException e) {
             System.out.println("IP address is not recognised");
             System.out.println(e.getMessage());
