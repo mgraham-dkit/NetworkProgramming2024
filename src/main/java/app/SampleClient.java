@@ -42,7 +42,7 @@ public class SampleClient {
 
             // LOGIC STAGE
             // Display the data from the packet
-            System.out.println("Message received: " + receivedMessage.toString());
+            System.out.println("Message received: " + new String(receivedMessage));
         } catch (UnknownHostException e) {
             System.out.println("IP address is not recognised");
             System.out.println(e.getMessage());
