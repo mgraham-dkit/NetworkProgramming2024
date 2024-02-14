@@ -1,13 +1,14 @@
-package intro_app.server;
+package file_server_system.server;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.time.LocalDate;
 
-public class DaytimeServer {
+public class FileServer {
     public static void main(String[] args) {
         // Establish server (MY) listening port
-        int myPort = 20990;
+        int myPort = 5784;
         DatagramSocket mySocket = null;
         
         // Create a window for server to access network
@@ -29,16 +30,24 @@ public class DaytimeServer {
                 String incomingMessage = new String(payload, 0, len);
                 System.out.println("Message reads: " + incomingMessage);
                 String [] components = incomingMessage.split("%%");
-                
+
                 // NOW I know what the client has sent - incomingMessage
                 // Create a variable to hold the outgoing message
                 String outgoing = null;
-                if(incomingMessage.equalsIgnoreCase("daytime")){
-                    outgoing=LocalDate.now().toString();
-                }else if(components[0].equalsIgnoreCase("echo")){
-                    outgoing = components[1];
-                }else{
-                    outgoing= "unknown command";
+                switch(components[0]){
+                    case "EXISTS":
+                        // Do all logic for what should be done where the user wants to check if a file exists
+                        String filename = components[1];
+                        File userFile = new File(filename);
+                        if(userFile.exists()){
+                            outgoing = "FOUND";
+                        }else{
+                            outgoing = "FILE_NOT_FOUND";
+                        }
+                        break;
+                    default:
+                        // Set the outgoing message for all unrecognised commands
+                        outgoing = "INVALID_COMMAND";
                 }
                 
 
