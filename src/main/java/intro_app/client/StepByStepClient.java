@@ -8,7 +8,9 @@ public class StepByStepClient {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         // Establish address information - OUR network port
-        int myPort = 10909;
+        System.out.println("Please enter the port to use for this client: ");
+        int myPort = input.nextInt();
+        input.nextLine();
 
         DatagramSocket mySocket = null;
         try {

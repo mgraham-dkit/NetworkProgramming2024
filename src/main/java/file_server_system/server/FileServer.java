@@ -3,6 +3,7 @@ package file_server_system.server;
 import file_server_system.FileServerProtocol;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.*;
 import java.time.Instant;
@@ -11,6 +12,115 @@ import java.util.Scanner;
 import java.util.TimeZone;
 
 public class FileServer {
+
+    public static String existsCommand(String[] components) {
+        String outgoing = null;
+        if (components.length == 2) {
+            // Do all logic for what should be done where the user wants to check if a file exists
+            String filename = components[1];
+            File f = new File(filename);
+            if (f.exists()) {
+                outgoing = FileServerProtocol.FOUND_RESPONSE;
+            } else {
+                outgoing = FileServerProtocol.NOT_FOUND_RESPONSE;
+            }
+        } else {
+            outgoing = FileServerProtocol.INVALID;
+        }
+        return outgoing;
+    }
+
+    public static String accessedCommand(String[] components) {
+        String outgoing = null;
+        if (components.length == 2) {
+            String filename = components[1];
+            File f = new File(filename);
+            if (f.exists()) {
+                long lastModified = f.lastModified();
+                LocalDateTime accessDate =
+                        LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified),
+                                TimeZone.getDefault().toZoneId());
+                outgoing =
+                        new String(accessDate.getDayOfWeek() + "" +
+                                accessDate.atZone(TimeZone.getDefault().toZoneId()));
+            } else {
+                outgoing = FileServerProtocol.NOT_FOUND_RESPONSE;
+            }
+        } else {
+            outgoing = FileServerProtocol.INVALID;
+        }
+        return outgoing;
+    }
+
+    public static String checkLength(String[] components) {
+        String outgoing = null;
+        if (components.length == 2) {
+            String filename = components[1];
+            File f = new File(filename);
+
+            if (f.exists()) {
+                long size = f.length();
+                outgoing = size + "";
+
+            } else {
+                outgoing = FileServerProtocol.NOT_FOUND_RESPONSE;
+            }
+        } else {
+            outgoing = FileServerProtocol.INVALID;
+        }
+        return outgoing;
+    }
+
+
+    public static String lineCommand(String[] components) {
+        String outgoing = null;
+        if (components.length == 3) {
+            String filename = components[1];
+            File f = new File(filename);
+
+            if (f.exists()) {
+                try {
+                    // Get the line number at which to stop
+                    int lineNum = Integer.parseInt(components[2]);
+                    if (lineNum < 0) {
+                        throw new IllegalArgumentException("Line count cannot be less than 0");
+                    }
+
+                    // Get appropriate line from file
+                    Scanner file = new Scanner(f);
+                    String line = null;
+                    int count = 0;
+                    while (file.hasNext() && count != lineNum) {
+                        line = file.nextLine();
+                        count++;
+                    }
+
+                    // Decide whether to send back line or error
+                    if (count == lineNum) {
+                        outgoing = line;
+                    } else {
+                        outgoing = FileServerProtocol.BOUNDS;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Line number supplied is not a number: " + components[2]);
+                    outgoing = FileServerProtocol.INVALID;
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Line number supplied is an invalid value: " + components[2]);
+                    System.out.println(e.getMessage());
+                    outgoing = FileServerProtocol.BOUNDS;
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                outgoing = FileServerProtocol.NOT_FOUND_RESPONSE;
+            }
+        } else {
+            outgoing = FileServerProtocol.INVALID;
+        }
+        return outgoing;
+    }
+
+
     public static void main(String[] args) {
         // Establish server (MY) listening port
         int myPort = FileServerProtocol.PORT;
@@ -31,113 +141,29 @@ public class FileServer {
                 int len = incomingPacket.getLength();
                 String incomingMessage = new String(payload, 0, len);
                 System.out.println("Message reads: " + incomingMessage);
-                String[] components = incomingMessage.split("%%");
-
+                String[] components = incomingMessage.split(FileServerProtocol.DELIMITER);
+                
                 // NOW I know what the client has sent - incomingMessage
                 // Create a variable to hold the outgoing message
                 String outgoing = null;
-                String filename;
-                File f;
+
                 switch (components[0]) {
                     case FileServerProtocol.EXISTS:
-                        if (components.length == 2) {
-                            // Do all logic for what should be done where the user wants to check if a file exists
-                            filename = components[1];
-                            f = new File(filename);
-                            if (f.exists()) {
-                                outgoing = FileServerProtocol.FOUND_RESPONSE;
-                            } else {
-                                outgoing = FileServerProtocol.NOT_FOUND_RESPONSE;
-                            }
-                        } else {
-                            outgoing = FileServerProtocol.INVALID;
-                        }
+                        outgoing = existsCommand(components);
                         break;
                     case FileServerProtocol.ACCESSED:
-                        if (components.length == 2) {
-                            filename = components[1];
-                            f = new File(filename);
-
-                            if (f.exists()) {
-                                long lastModified = f.lastModified();
-                                LocalDateTime accessDate =
-                                        LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified),
-                                                TimeZone.getDefault().toZoneId());
-                                outgoing =
-                                        new String(accessDate.getDayOfWeek() + "" +
-                                                accessDate.atZone(TimeZone.getDefault().toZoneId()));
-                            } else {
-                                outgoing = FileServerProtocol.NOT_FOUND_RESPONSE;
-                            }
-                        } else {
-                            outgoing = FileServerProtocol.INVALID;
-                        }
+                        outgoing = accessedCommand(components);
                         break;
                     case FileServerProtocol.LINE:
-                        if (components.length == 3) {
-                            filename = components[1];
-                            f = new File(filename);
-
-                            if (f.exists()) {
-                                try {
-                                    // Get the line number at which to stop
-                                    int lineNum = Integer.parseInt(components[2]);
-                                    if(lineNum < 0){
-                                        throw new IllegalArgumentException("Line count cannot be less than 0");
-                                    }
-
-                                    // Get appropriate line from file
-                                    Scanner file = new Scanner(f);
-                                    String line = null;
-                                    int count = 0;
-                                    while (file.hasNext() && count != lineNum){
-                                        line = file.nextLine();
-                                        count++;
-                                    }
-
-                                    // Decide whether to send back line or error
-                                    if(count == lineNum){
-                                        outgoing = line;
-                                    }else{
-                                        outgoing = FileServerProtocol.BOUNDS;
-                                    }
-                                }catch(NumberFormatException e){
-                                    System.out.println("Line number supplied is not a number: " + components[2]);
-                                    outgoing = FileServerProtocol.INVALID;
-                                }catch(IllegalArgumentException e){
-                                    System.out.println("Line number supplied is an invalid value: " + components[2]);
-                                    System.out.println(e.getMessage());
-                                    outgoing = FileServerProtocol.BOUNDS;
-                                }
-                            }else {
-                                outgoing = FileServerProtocol.NOT_FOUND_RESPONSE;
-                            }
-                        } else {
-                            outgoing = FileServerProtocol.INVALID;
-                        }
+                        outgoing = lineCommand(components);
                         break;
                     case FileServerProtocol.LENGTH:
-                        if (components.length == 2) {
-
-                            filename = components[1];
-                            f = new File(filename);
-
-                            if (f.exists()) {
-                                long size = f.length();
-                                outgoing = size + "";
-
-                            } else {
-                                outgoing = FileServerProtocol.NOT_FOUND_RESPONSE;
-                            }
-                        } else {
-                            outgoing = FileServerProtocol.INVALID;
-                        }
+                        outgoing = checkLength(components);
                         break;
                     default:
                         // Set the outgoing message for all unrecognised commands
                         outgoing = FileServerProtocol.INVALID;
                 }
-
 
                 // Get the address information from the received packet
                 InetAddress clientIP = incomingPacket.getAddress();

@@ -8,6 +8,7 @@ public class FileServerProtocol {
     public static final String LENGTH = "LENGTH";
     public static final String ACCESSED = "LAST_ACCESSED";
     public static final String LINE = "LINE";
+    public static final String DELIMITER = "%%";
 
     // RESPONSE STRINGS
     public static final String NOT_FOUND_RESPONSE = "FILE_NOT_FOUND";
