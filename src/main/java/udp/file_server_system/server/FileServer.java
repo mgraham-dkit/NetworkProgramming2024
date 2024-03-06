@@ -1,6 +1,6 @@
-package file_server_system.server;
+package udp.file_server_system.server;
 
-import file_server_system.FileServerProtocol;
+import udp.file_server_system.FileServerProtocol;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -142,7 +142,7 @@ public class FileServer {
                 String incomingMessage = new String(payload, 0, len);
                 System.out.println("Message reads: " + incomingMessage);
                 String[] components = incomingMessage.split(FileServerProtocol.DELIMITER);
-                
+
                 // NOW I know what the client has sent - incomingMessage
                 // Create a variable to hold the outgoing message
                 String outgoing = null;
@@ -184,7 +184,7 @@ public class FileServer {
         } catch (IOException e) {
             System.out.println("Problem occurred when waiting to receive/receiving a message. Please try again later.");
         }
-
         System.out.println("Server shutting down...");
+
     }
 }

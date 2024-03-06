@@ -1,4 +1,4 @@
-package intro_app.client;
+package udp.intro_app.client;
 
 import java.io.IOException;
 import java.net.*;

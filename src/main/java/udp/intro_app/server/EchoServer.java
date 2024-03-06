@@ -1,10 +1,9 @@
-package intro_app.server;
+package udp.intro_app.server;
 
 import java.io.IOException;
 import java.net.*;
-import java.time.LocalDate;
 
-public class DaytimeServer {
+public class EchoServer {
     public static void main(String[] args) {
         // Establish server (MY) listening port
         int myPort = 20990;
@@ -28,18 +27,6 @@ public class DaytimeServer {
                 int len = incomingPacket.getLength();
                 String incomingMessage = new String(payload, 0, len);
                 System.out.println("Message reads: " + incomingMessage);
-                String [] components = incomingMessage.split("%%");
-                
-                // NOW I know what the client has sent - incomingMessage
-                // Create a variable to hold the outgoing message
-                String outgoing = null;
-                if(incomingMessage.equalsIgnoreCase("daytime")){
-                    outgoing=LocalDate.now().toString();
-                }else if(components[0].equalsIgnoreCase("echo")){
-                    outgoing = components[1];
-                }else{
-                    outgoing= "unknown command";
-                }
                 
 
                 // Get the address information from the received packet
@@ -47,7 +34,7 @@ public class DaytimeServer {
                 int clientPort = incomingPacket.getPort();
 
                 // Build byte array out of received message (without padding)
-                byte[] payloadToBeSent = outgoing.getBytes();
+                byte[] payloadToBeSent = incomingMessage.getBytes();
                 // Build packet to hold the information
                 DatagramPacket sendingPacket = new DatagramPacket(payloadToBeSent, payloadToBeSent.length, clientIP,
                         clientPort);

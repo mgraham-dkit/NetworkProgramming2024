@@ -1,4 +1,4 @@
-package file_server_system;
+package udp.file_server_system;
 
 public class FileServerProtocol {
     public static final int PORT = 5784;
