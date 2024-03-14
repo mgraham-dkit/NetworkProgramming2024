@@ -38,11 +38,11 @@ public class TCPMathsServer {
                                         int value = Integer.parseInt(components[1]);
                                         int result = value * value * value;
                                         response = "" + result;
-                                        if(value > clientLargest){
-                                            clientLargest = value;
+                                        if(result > clientLargest){
+                                            clientLargest = result;
                                         }
-                                        if(value > largest){
-                                            largest = value;
+                                        if(result > largest){
+                                            largest = result;
                                         }
                                     }catch(NumberFormatException e){
                                         response = MathsService.NOT_NUMBER;
@@ -58,11 +58,11 @@ public class TCPMathsServer {
                                         int value = Integer.parseInt(components[1]);
                                         int result = value * value;
                                         response = "" + result;
-                                        if(value > clientLargest){
-                                            clientLargest = value;
+                                        if(result > clientLargest){
+                                            clientLargest = result;
                                         }
-                                        if(value > largest){
-                                            largest = value;
+                                        if(result > largest){
+                                            largest = result;
                                         }
                                     }catch(NumberFormatException e){
                                         response = MathsService.NOT_NUMBER;
@@ -73,14 +73,26 @@ public class TCPMathsServer {
                                 }
                                 break;
                             case(MathsService.MYLARGEST):
-                                response = "" + clientLargest;
+                                if(components.length == 1) {
+                                    response = "" + clientLargest;
+                                }else{
+                                    response = MathsService.INVALID;
+                                }
                                 break;
                             case(MathsService.LARGEST):
-                                response = "" + largest;
+                                if(components.length == 1) {
+                                    response = "" + largest;
+                                }else{
+                                    response = MathsService.INVALID;
+                                }
                                 break;
                             case(MathsService.EXIT):
-                                validSession = false;
-                                response = MathsService.SIGNOFF;
+                                if(components.length == 1) {
+                                    validSession = false;
+                                    response = MathsService.SIGNOFF;
+                                }else{
+                                    response = MathsService.INVALID;
+                                }
                                 break;
                             default:
                                 response = MathsService.INVALID;
