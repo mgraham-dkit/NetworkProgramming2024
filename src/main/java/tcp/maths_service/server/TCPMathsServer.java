@@ -27,6 +27,7 @@ public class TCPMathsServer {
                     while(validSession){
                         // Take in a request
                         String message = input.nextLine();
+                        System.out.println("Message received from " + dataSocket.getInetAddress()+":"+dataSocket.getPort() + ": " + message);
                         // Parse the request
                         String [] components = message.split(MathsService.DELIMITER);
                         // Do the requested action and generate an appropriate response
