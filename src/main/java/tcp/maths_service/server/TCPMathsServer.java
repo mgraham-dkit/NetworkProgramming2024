@@ -32,7 +32,7 @@ public class TCPMathsServer {
         }
     }
 
-    private static int handleClientSession(Socket dataSocket) {
+    private static void handleClientSession(Socket dataSocket) {
         // Set up our lines of communication - input and output
         try (Scanner input = new Scanner(dataSocket.getInputStream());
              PrintWriter output = new PrintWriter(dataSocket.getOutputStream())) {
