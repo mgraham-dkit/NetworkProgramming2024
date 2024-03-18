@@ -20,7 +20,7 @@ public class TCPMathsServer {
                 Socket dataSocket = listeningSocket.accept();
                 // Set up our lines of communication - input and output
                 try (Scanner input = new Scanner(dataSocket.getInputStream());
-                     PrintWriter output = new PrintWriter(dataSocket.getOutputStream());) {
+                     PrintWriter output = new PrintWriter(dataSocket.getOutputStream())) {
                     boolean validSession = true;
                     int clientLargest = Integer.MIN_VALUE;
                     // REPEATEDLY
@@ -31,7 +31,7 @@ public class TCPMathsServer {
                         // Parse the request
                         String [] components = message.split(MathsService.DELIMITER);
                         // Do the requested action and generate an appropriate response
-                        String response = "";
+                        String response = null;
                         switch(components[0]){
                             case(MathsService.CUBE):
                                 if(components.length == 2){
