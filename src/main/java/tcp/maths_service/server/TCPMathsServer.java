@@ -79,7 +79,6 @@ public class TCPMathsServer {
             System.out.println("IOException occurred on data socket when communicating with " + dataSocket.getInetAddress() + ":" + dataSocket.getPort());
             System.out.println(e.getMessage());
         }
-        return largest;
     }
 
     private static String getLargest(String[] components) {
