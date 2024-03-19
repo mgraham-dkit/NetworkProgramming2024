@@ -1,5 +1,6 @@
 package tcp.quote_service.server;
 
+import tcp.quote_service.business.Quote;
 import tcp.quote_service.business.QuoteManager;
 import tcp.quote_service.protocol.QuoteService;
 
@@ -35,6 +36,15 @@ public class TCPQuoteServer {
                     String[] components = request.split(QuoteService.DELIMITER);
 
                     switch (components[0]) {
+                        case QuoteService.GET:
+                            if (components.length == 1) {
+                                Quote generated = quoteManager.getRandomQuote();
+                                response =
+                                        generated.getQuotationText() + QuoteService.DELIMITER + generated.getAuthor();
+                            } else {
+                                response = QuoteService.INVALID;
+                            }
+                            break;
                         default:
                             response = QuoteService.INVALID;
                     }

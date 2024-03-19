@@ -9,7 +9,7 @@ public class QuoteService {
     public static final String DELIMITER = "%%";
 
     // Requests
-
+    public static final String GET = "GET_QUOTE";
     // Responses
     public static final String INVALID = "ERROR";
 
