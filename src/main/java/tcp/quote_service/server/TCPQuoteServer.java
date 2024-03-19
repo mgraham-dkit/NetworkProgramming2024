@@ -30,11 +30,11 @@ public class TCPQuoteServer {
                      PrintWriter clientOutput = new PrintWriter(dataSocket.getOutputStream())) {
                     // Receive a request
                     String request = clientInput.nextLine();
+                    System.out.println(dataSocket.getInetAddress() + ":" + dataSocket.getPort() + " : " + request);
 
                     String response = null;
                     // Parse the request
                     String[] components = request.split(QuoteService.DELIMITER);
-
                     switch (components[0]) {
                         case QuoteService.GET:
                             if (components.length == 1) {
@@ -48,10 +48,8 @@ public class TCPQuoteServer {
                         default:
                             response = QuoteService.INVALID;
                     }
-
                     // Send a response
-
-
+                    System.out.println("Responding : " + response);
                     clientOutput.println(response);
                     clientOutput.flush();
                 }
