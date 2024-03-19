@@ -51,7 +51,7 @@ public class ClearTCPQuoteClient {
     private static void handleGetResponse(String response) {
         String [] responseComponents = response.split(QuoteService.DELIMITER);
         if(responseComponents.length == 2){
-            System.out.printf("Quote received:");
+            System.out.println("Quote received:");
             System.out.println("\"" + responseComponents[0] + "\"");
             System.out.println("\t- " + responseComponents[1]);
         }else{
