@@ -123,6 +123,19 @@ public class QuoteManager {
         // Return the list of all matches (note: this could be empty, but cannot be null)
         return matches;
     }
+
+    public String encode(String quoteDelimiter, String quoteComponentDelimiter){
+        if(quotations.isEmpty()){
+            return "";
+        }
+        String encoded = quotations.get(0).encode(quoteComponentDelimiter);
+        for(int i = 1; i < quotations.size(); i++){
+            Quote q = quotations.get(i);
+            String encodedQuote = q.encode(quoteComponentDelimiter);
+            encoded += quoteDelimiter + encodedQuote;
+        }
+        return encoded;
+    }
     
     // Display all quotes on the command line
     public void displayQuotes()
@@ -152,22 +165,24 @@ public class QuoteManager {
         // Method to test methods
         // Create a QuoteManager to test the methods with
         QuoteManager quoteManager = new QuoteManager();
-        // Display all quotes to the user
-        System.out.println("Display all quotes to the user: ");
-        quoteManager.displayQuotes();
-        // Add a new quote to the system
-        quoteManager.addQuote("We arrive into this world as innocents.", "Klaus");
-        // Retrieve a random quote from the list
-        System.out.println("Random quote: " + quoteManager.getRandomQuote());
-        // Try to retrieve a quote from a position that doesn't exist (this should display false)
-        System.out.println("Quote from position 12: " + quoteManager.getQuote(12));
-        // Remove an existing quote
-        System.out.println("Removed an existing quote: " + quoteManager.removeQuote("Even if you’re on the right track, you’ll get run over if you just sit there", "Will Rogers"));
-        // Remove a quote that doesn't exist.
-        System.out.println("Removed the same quote: " + quoteManager.removeQuote("Even if you’re on the right track, you’ll get run over if you just sit there", "Will Rogers"));
-        
-        // Display all quotes to the user
-        System.out.println("Display all quotes to the user: ");
-        quoteManager.displayQuotes();
+//        // Display all quotes to the user
+//        System.out.println("Display all quotes to the user: ");
+//        quoteManager.displayQuotes();
+//        // Add a new quote to the system
+//        quoteManager.addQuote("We arrive into this world as innocents.", "Klaus");
+//        // Retrieve a random quote from the list
+//        System.out.println("Random quote: " + quoteManager.getRandomQuote());
+//        // Try to retrieve a quote from a position that doesn't exist (this should display false)
+//        System.out.println("Quote from position 12: " + quoteManager.getQuote(12));
+//        // Remove an existing quote
+//        System.out.println("Removed an existing quote: " + quoteManager.removeQuote("Even if you’re on the right track, you’ll get run over if you just sit there", "Will Rogers"));
+//        // Remove a quote that doesn't exist.
+//        System.out.println("Removed the same quote: " + quoteManager.removeQuote("Even if you’re on the right track, you’ll get run over if you just sit there", "Will Rogers"));
+//
+//        // Display all quotes to the user
+//        System.out.println("Display all quotes to the user: ");
+//        quoteManager.displayQuotes();
+        String encoded = quoteManager.encode("~~", "%%");
+        System.out.println(encoded);
     }
 }

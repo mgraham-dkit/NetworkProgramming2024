@@ -77,4 +77,28 @@ public class Quote {
     {
         return "Quote{" + "quotationText=" + quotationText + ", author=" + author + '}';
     }
+
+    public String encode(String delimiter){
+        return this.quotationText + delimiter + this.author;
+    }
+
+    public static Quote decode(String encoded, String delimiter){
+        String [] components  = encoded.split(delimiter);
+        if(components.length != 2){
+            return null;
+        }
+
+        return new Quote(components[0], components[1]);
+    }
+
+    public static void main(String[] args) {
+        Quote test = new Quote("Oh, biscuits!", "Bandit Heeler");
+        String encoded = test.encode("%%");
+        System.out.println(encoded);
+        Quote decodedQuote = Quote.decode(encoded, "%%");
+        if(decodedQuote != null && decodedQuote.equals(test)){
+            System.out.println("Quotes are the same!");
+        }
+
+    }
 }
