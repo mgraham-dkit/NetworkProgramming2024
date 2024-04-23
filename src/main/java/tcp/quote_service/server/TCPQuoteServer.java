@@ -24,35 +24,11 @@ public class TCPQuoteServer {
             while (true) {
                 // Accept an incoming connection request
                 Socket dataSocket = listeningSocket.accept();
-
-                // Open communication lines
-                try (Scanner clientInput = new Scanner(dataSocket.getInputStream());
-                     PrintWriter clientOutput = new PrintWriter(dataSocket.getOutputStream())) {
-                    // Receive a request
-                    String request = clientInput.nextLine();
-                    System.out.println(dataSocket.getInetAddress() + ":" + dataSocket.getPort() + " : " + request);
-
-                    String response = null;
-                    // Parse the request
-                    String[] components = request.split(QuoteService.DELIMITER);
-                    switch (components[0]) {
-                        case QuoteService.GET:
-                            if (components.length == 1) {
-                                Quote generated = quoteManager.getRandomQuote();
-                                response =
-                                        generated.getQuotationText() + QuoteService.DELIMITER + generated.getAuthor();
-                            } else {
-                                response = QuoteService.INVALID;
-                            }
-                            break;
-                        default:
-                            response = QuoteService.INVALID;
-                    }
-                    // Send a response
-                    System.out.println("Responding : " + response);
-                    clientOutput.println(response);
-                    clientOutput.flush();
-                }
+                //handleClientSession(dataSocket);
+                // Make an instance of our runnable (client handler)
+                QuoteClientHandler clientHandler = new QuoteClientHandler(dataSocket, quoteManager);
+                Thread wrapper = new Thread(clientHandler);
+                wrapper.start();
             }
         } catch (BindException e) {
             System.out.println("BindException occurred when attempting to bind to port " + QuoteService.PORT);
@@ -62,5 +38,4 @@ public class TCPQuoteServer {
             System.out.println(e.getMessage());
         }
     }
-
 }

@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class ClearTCPQuoteClient {
+public class ClearTCPQuoteClient1 {
     public static void main(String[] args) {
         Scanner userInput = new Scanner(System.in);
         // Requests a connection
