@@ -58,13 +58,15 @@ public class QuoteManager {
         Quote quote = new Quote(text, author);
         // If there is already a quote in the system matching the supplied
         // quote text and author, remove it and return true
-        if(quotations.contains(quote)){
-            quotations.remove(quote);
-            return true;
-        }
-        // If there is not already a quote in the system, return false
-        else{
-            return false;
+        synchronized (quotations) {
+            if (quotations.contains(quote)) {
+                quotations.remove(quote);
+                return true;
+            }
+            // If there is not already a quote in the system, return false
+            else {
+                return false;
+            }
         }
     }
     
@@ -76,9 +78,11 @@ public class QuoteManager {
     public Quote getRandomQuote()
     {
         // Pick a random number between 0 and the size of the list
-        int index = randomNumGen.nextInt(quotations.size());
-        // Retrieve the quote at the randomly selected index
-        return quotations.get(index);
+        synchronized (quotations) {
+            int index = randomNumGen.nextInt(quotations.size());
+            // Retrieve the quote at the randomly selected index
+            return quotations.get(index);
+        }
     }
     
     /**
